@@ -96,9 +96,10 @@ subject line).
 
 v0.5.1 Was the initial release
 
-v0.6.0 Changes the license to GPL v2.0 and fixes a problem with newer
-kernels (v2.6.10) that include a new entry in /proc/meminfo
-
+v0.6 Changes the license to GPL v2.0 and fixes a problem with newer
+     kernels (v2.6.10) that include a new entry in /proc/meminfo
+     Fixed command line processing so that --log and --graph can be used
+     at the same time.
 
 The License
 
