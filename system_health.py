@@ -3,11 +3,35 @@
 # ------------------------------------------------------------------------
 # Linux System Health Monitoring
 # by Brian C. Lane
-# Copyright 2004 by Brian C. Lane
+# Copyright 2005 by Brian C. Lane
 # All Rights Reserved
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 2 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
+#
 # ------------------------------------------------------------------------
-# $Id$
-# ------------------------------------------------------------------------
+# 02/01/2005   Nope, the problem is with /proc/meminfo in the 2.6.10
+# bcl          kernel. They added a new field - CommitLimit - in the
+#              middle of the output.
+#              read_meminfo now needs to get alot more complicated. 
+#              Instead of just dumping each value into the RRD it needs to
+#              parse the field name and put it into the right place in 
+#              the RRD, and skip CommitLimit if >2.4 and < 2.6.10
+#              Stuff the data from /proc/meminfo into a hash, then walk a
+#              list of the fields for the meminfo.rrd and if it isn't in
+#              the hash set it to a 'U'.
+#
 # 01/15/2005   New kernel release broke kernel_rev, fixed it by added a
 # bcl          test for version so it should always get the right place.
 #
@@ -48,10 +72,7 @@ import sys, os, string, re, traceback, ConfigParser
 from time import *
 from getopt import *
 
-# Extract the CVS version
-VERSION = string.split("$Revision: 1.3 $")[1]
-
-release_version = "v0.5.1"
+release_version = "v0.6.0"
 
 # turn on a bunch of debugging prints
 debug = 0
@@ -80,15 +101,47 @@ height = 100
 # Time graphs to generate (shortest first)
 rrd_time = [ "-3hours", "-32hours", "-8days", "-5weeks", "-13months" ]
 
+
+# meminfo fields (as of kernel 2.6.10)
+meminfo_fields = [
+                    "MemTotal",
+                    "MemFree",
+                    "Buffers",
+                    "Cached",
+                    "SwapCached",
+                    "Active",
+                    "Inactive",
+                    "HighTotal",
+                    "HighFree",
+                    "LowTotal",
+                    "LowFree",
+                    "SwapTotal",
+                    "SwapFree",
+                    "Dirty",
+                    "Writeback",
+                    "Mapped",
+                    "Slab",
+                    "CommitLimit",
+                    "Committed_AS",
+                    "PageTables",
+                    "VmallocTotal",
+                    "VmallocUsed",
+                    "VmallocChunk",
+                    "HugePages_Total",
+                    "HugePages_Free",
+                    "Hugepagesize"
+                 ]
+
 # ------------------------------------------------------------------------
 # System Health Monitor usage
 # ------------------------------------------------------------------------
 def usage():
     print "System Health Monitor %s" % (release_version)
     print "by Brian C. Lane <bcl@brianlane.com>"
-    print "Copyright 2004 by Brian C. Lane"
+    print "Copyright 2005 by Brian C. Lane"
     print "All Rights Reserved"
-    print "\nSee LICENSE and README for details\n\n"
+    print "Released under GPL v2.0"
+    print "See LICENSE and README for details\n\n"
     print "  --setup    Interactive setup of paths, interfaces and processes to be"
     print "             monitored. NOTE that all previous settings in "
     print "             %s are erased." % (config_file)
@@ -172,6 +225,7 @@ def create_meminfo( rrd_file ):
                     "DS:Writeback:GAUGE:600:U:U",
                     "DS:Mapped:GAUGE:600:U:U",
                     "DS:Slab:GAUGE:600:U:U",
+                    "DS:CommitLimit:GAUGE:600:U:U",
                     "DS:Committed_AS:GAUGE:600:U:U",
                     "DS:PageTables:GAUGE:600:U:U",
                     "DS:VmallocTotal:GAUGE:600:U:U",
@@ -1180,16 +1234,20 @@ def read_meminfo( meminfo_rrd ):
         
     lines = meminfo.readlines()
     meminfo.close()
-    
-    rrd_data = "N:"
+
+    # Stuff the fields into a hash
+    meminfo_stats = {}
     for line in lines:
         line = line[:-1]
         stats = line.split()
-        rrd_data = rrd_data + stats[1] + ":"
+        meminfo_stats[ stats[0][:-1] ] = stats[1]
 
-    if len(lines) < 25:
-        # Fill in the info other kernels don't provide
-        for i in range(0,25 - len(lines)):
+    # Creat the rrd data entry    
+    rrd_data = "N:"
+    for field in meminfo_fields:
+        if field in meminfo_stats.keys():
+            rrd_data = rrd_data + meminfo_stats[field]  + ":"
+        else:
             rrd_data = rrd_data + "U:"
 
     # remove trailing ':'    

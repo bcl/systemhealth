@@ -1,7 +1,7 @@
 System Health Monitor
 Copyright 2004 by Brian C. Lane <bcl@brianlane.com>
 All Rights Reserved
-
+Licensed under GPL v2.0
 
 This python program monitors your system's network interfaces, memory, load,
 running processes and disk space (and inode usage). It creates Round Robin
@@ -88,19 +88,21 @@ bcl@brianlane.com (if you want to make sure your email makes it through my
 carrier-class spam filtering you should add the word slartibartfast to the
 subject line).
 
+v0.5.1 Was the initial release
 
-The Licenses
+v0.6.0 Changes the license to GPL v2.0 and fixes a problem with newer
+kernels (v2.6.10) that include a new entry in /proc/meminfo
 
-System Health Monitor is Licensed under a dual license based on the Software
-Garden license written by Dan Bricklin. A copy of the licenses are in the
-LICENSE file. There is one for non-commercial use and one for commercial
-use. Basically this software is free for non-commercial use and $10 for
-commercial users. See the LICENSE file for the details.
 
-Payment can be made via paypal payment sent to bcl@brianlane.com
+The License
+
+I have changed (as of release v0.6.0) licenses to GPL v2.0, although
+donations are still greatly appreciated and help to motivate me to improve
+and maintain my software. Donations can be made via paypal payment sent to
+bcl@brianlane.com
 
 Thanks for using my software,
 
 Brian C. Lane
-August 8, 2004
+February 1, 2005
 The Basement
