@@ -21,6 +21,9 @@
 # 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
 #
 # ------------------------------------------------------------------------
+# 02/05/2005   Changed it so that --graph and --log can be done at the 
+# bcl          same time. Simplified the crontab entry.
+#
 # 02/01/2005   Nope, the problem is with /proc/meminfo in the 2.6.10
 # bcl          kernel. They added a new field - CommitLimit - in the
 #              middle of the output.
@@ -1849,7 +1852,8 @@ if command.has_key('--log'):
     read_drive_space( drives_rrd )
     read_drive_inodes( drives_rrd )
     read_process_list( process_rrd )
-elif command.has_key('--graph'):
+    
+if command.has_key('--graph'):
     graph_interfaces( interfaces_rrd )
     graph_loadavg( loadavg_rrd )
     graph_uptime( uptime_rrd )
