@@ -78,7 +78,7 @@ import sys, os, string, re, traceback, ConfigParser
 from time import *
 from getopt import *
 
-release_version = "v0.6.0"
+release_version = "v0.6"
 
 # turn on a bunch of debugging prints
 debug = 0
