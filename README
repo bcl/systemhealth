@@ -10,6 +10,13 @@ includes a user friendly interactive setup mode, and it generates HTML files
 suitable for inclusion in a webpage or local viewing.
 
 
+UPDATE - If you are upgrading from v0.5.1 to 0.6.0 you will need to delete
+your meminfo.rrd file and create a new one with systemhealth.py --check,
+this is due to the kernel folks adding a new line to /proc/meminfo in
+v2.6.10 kernel.
+
+
+
 This program requires a few things to work correctly.
 
 1. Round Robin Database from Tobi Oetiker
