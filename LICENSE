@@ -1,0 +1,155 @@
+Non-Commercial Use License
+==========================
+(see below for commercial use license)
+
+
+SYSTEM HEALTH MONITOR SOFTWARE LICENSE
+
+This software is Copyright (c) Brian C. Lane, All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. This software may not be used for Commercial Purposes nor Distributed
+Commercially unless the terms of the companion Commercial License are met.
+The details of such license for this software, which includes payment
+requirements and the definitions of the terms "Commercial Purposes" and
+"Distributed Commercially", may be found on the website at
+http://www.brianlane.com/licenses/ or may be obtained from the postal
+address below.
+
+2. Redistributions in source code must retain the above copyright notice,
+this list of conditions, and the following disclaimer.
+
+3. Redistributions in binary form must reproduce the above copyright notice,
+this list of conditions, and the following disclaimer in the documentation
+and/or other materials provided with the distribution.
+
+4. The end-user documentation included with the redistribution, if any, must
+include the following acknowledgment:
+
+"This product includes software developed by Brian C. Lane
+(www.brianlane.com)."
+
+Alternately, this acknowledgment may appear in the software itself, if and
+wherever such third-party acknowledgments normally appear.
+
+5. The names Nexus Computing, and Brian C. Lane must not be used to endorse
+or promote products derived from this software without prior written
+permission from Brian C. Lane, respectively.
+
+6. The right to distribute this software or to use it for any purpose does
+not give you the right to use Servicemarks or Trademarks of Nexus Computing,
+or Brian C. Lane.
+
+7. If any files are modified, you must cause the modified files to carry
+prominent notices stating that you changed the files and the date and nature
+of any change.
+
+8. Modified versions that are redistributed must not remove rights or
+licensing notices present in the product, nor cause them not to be displayed
+when the software is executed.
+
+Disclaimer
+
+THIS SOFTWARE IS PROVIDED BY BRIAN C. LANE, "AS IS" AND ANY EXPRESSED OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF
+INFRINGEMENT AND THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL BRIAN C. LANE BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE DISTRIBUTION OR USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+Brian C. Lane does not condone the use of this software for unlawful,
+malicious, harassing, disruptive, or abusive purposes.
+
+Additional Software
+
+In some cases this software is distributed with additional software
+copyright by others for the purpose of installation and execution. The above
+license for redistribution and modification does not apply to such
+additional software.
+
+License version: 1.00/2004-08-08/bcl
+
+Brian C. Lane
+P.O. Box 251
+Port Gamble, WA 98364-251
+http://www.brianlane.com
+
+
+
+
+Commercial License
+==================
+
+SYSTEM HEALTH MONITOR COMMERCIAL LICENSE COMPANION TO THE SYSTEM HEALTH
+MONITOR SOFTWARE LICENSE 1.0
+
+Software licensed by Brian C. Lane, that states that it may not be used for
+Commercial Purposes nor Distributed Commercially unless the terms of the
+companion Commercial License are met (the "Software") is subject to the
+following additional license requirements for use or distribution:
+
+Definitions
+
+"Commercial Purposes" means you are a business with annual sales or revenues
+greater than $25,000 and use the software as part of that endeavor. (A
+"business" files business tax returns, including the personal Schedule C, or
+should if it was in the USA.) Non-profit educational institutions are not
+considered businesses for this license, nor are U.S. 501(c)(3) tax exempt
+organizations. Use for training purposes in an educational setting within
+any business is not considered use for Commercial Purposes.
+
+"Distributed Commercially" means a charge is made for the distribution,
+installation, training, etc., of the Software or the Software is used as
+part of a service or product for which payment is made or required.
+
+Requirements
+
+Payment of a License Fee to Brian C. Lane, is required if the Software is
+used for Commercial Purposes. The current amount of the License Fee and
+method of payment is listed on Brian C. Lane's website, www.brianlane.com,
+or may be obtained from the postal address below.
+
+Before payment of the License Fee, the Software may be used for Commercial
+Purposes during a single 30-day Evaluation Period in order to determine
+whether or not the Software meets the intended needs and performs
+satisfactorily. After that Evaluation Period, a License Fee must be paid or
+else use of the Software must cease.
+
+Multiple copies of the Software require one License Fee for each
+simultaneous user of the Software, but no more than one License Fee per
+person who uses it (i.e., a single individual may run multiple simultaneous
+copies on multiple computers on behalf of a single company while paying only
+one License Fee, but if five users each are using it at the same time five
+License Fees must have been paid).
+
+All use of the Software that is Distributed Commercially is considered use
+for Commercial Purposes, even if such use would not be considered commercial
+otherwise (e.g., use by an educational institution, or personal use). Also,
+in such case, the 30-day Evaluation Period does not apply. The
+responsibility for making sure that payment is made to Brian C. Lane, rests
+with the distributor.
+
+In the event that Brian C. Lane, has ceased to exist, has officially
+released users of this Software from this Commercial License requirement
+through public notice, or is unresponsive to reasonable attempts to be paid,
+then these Commercial License requirements are waived.
+
+License version: 1.0/2004-08-08/bcl
+
+Brian C. Lane
+P.O. Box 251
+Port Gamble, WA 98364-251
+http://www.brianlane.com
+
+
+
+These licenses are based on the Software Garden licenses written by Dan
+Bricklin. The originals are available at
+http://www.softwaregarden.com/legal/index.html
