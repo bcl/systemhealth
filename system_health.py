@@ -6,8 +6,11 @@
 # Copyright 2004 by Brian C. Lane
 # All Rights Reserved
 # ------------------------------------------------------------------------
-# $Id: system_health.py,v 1.3 2004/08/08 18:53:39 bcl Exp $
+# $Id$
 # ------------------------------------------------------------------------
+# 01/15/2005   New kernel release broke kernel_rev, fixed it by added a
+# bcl          test for version so it should always get the right place.
+#
 # 08/28/2004   Added more overview pages and links to them from the index.
 # bcl
 #
@@ -1673,7 +1676,8 @@ if os.getuid() == 0:
 # Determine the kernel version (some /proc interfaces are different)
 # from /proc/version
 version = open("/proc/version").readline()
-kernel_rev = float(re.search(r'(\d+\.\d+)\.\d+-', version).group(1))
+#kernel_rev = float(re.search(r'(\d+\.\d+)\.\d+-', version).group(1))
+kernel_rev = float(re.search(r'version (\d+\.\d+)\.\d+', version).group(1))
 if (kernel_rev > 2.6) or (kernel_rev < 2.4):
     sys.stderr.write("Sorry, kernel v%0.1f is not supported\n" % kernel_rev)
     sys.exit(-1)
