@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # ------------------------------------------------------------------------
-# Linux System Health Monitoring
+# Linux System Health Monitoring v0.6
 # by Brian C. Lane
 # Copyright 2005 by Brian C. Lane
 # All Rights Reserved
@@ -21,6 +21,9 @@
 # 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
 #
 # ------------------------------------------------------------------------
+# 02/12/2005   Changed version to 0.6 without the useless trailing .0
+# bcl
+#
 # 02/05/2005   Changed it so that --graph and --log can be done at the 
 # bcl          same time. Simplified the crontab entry.
 #
