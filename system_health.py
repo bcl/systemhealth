@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
 # ------------------------------------------------------------------------
-# Linux System Health Monitoring v0.6
+# Linux System Health Monitoring v0.7
 # by Brian C. Lane
-# Copyright 2005 by Brian C. Lane
+# Copyright 2005-2006 by Brian C. Lane
 # All Rights Reserved
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -21,6 +21,12 @@
 # 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
 #
 # ------------------------------------------------------------------------
+# 06/10/2006   Adding external call feature. This will allow it to call
+# bcl          an external program which returns a single numeric ASCII
+#              value for inclusion into a rrdtool graph. The external
+#              program can be added with the --add command which will
+#              then prompt the user for appropriate parameters.
+#
 # 02/12/2005   Changed version to 0.6 without the useless trailing .0
 # bcl
 #
@@ -78,7 +84,7 @@ import sys, os, string, re, traceback, ConfigParser
 from time import *
 from getopt import *
 
-release_version = "v0.6"
+release_version = "v0.7"
 
 # turn on a bunch of debugging prints
 debug = 0
@@ -144,7 +150,7 @@ meminfo_fields = [
 def usage():
     print "System Health Monitor %s" % (release_version)
     print "by Brian C. Lane <bcl@brianlane.com>"
-    print "Copyright 2005 by Brian C. Lane"
+    print "Copyright 2005-2006 by Brian C. Lane"
     print "All Rights Reserved"
     print "Released under GPL v2.0"
     print "See LICENSE and README for details\n\n"
@@ -157,6 +163,8 @@ def usage():
     print "             the %s config file)" % (config_file)
     print "  --check    Check for new additions to the %s " % (config_file)
     print "             config file and create the missing rrd files"
+    print "  --add      Add an external program. It should return a single"
+    print "             ASCII number (integer or float)"
 
 
 # ------------------------------------------------------------------------
@@ -705,6 +713,17 @@ def setup_monitor():
     config.write(cf)
     cf.close()
 
+
+def add_external():
+    """
+    Prompt the user for an external program to be called. It should return
+    a single ASCII number (integer or float).
+    
+    Each external program needs a 'name' used to label the rrd graph, a
+    path to the executable, and a name for the rrd file to store the data in.
+    """
+    pass
+    
 
 def create_html():
     """
@@ -1748,7 +1767,7 @@ if (kernel_rev > 2.6) or (kernel_rev < 2.4):
 
 
 # Process command line arguments
-opts, args = getopt( sys.argv[1:], "", ["log","graph","setup","check","new","html"])
+opts, args = getopt( sys.argv[1:], "", ["log","graph","setup","check","new","html","add"])
 
 if not opts:
     usage()
@@ -1761,6 +1780,9 @@ config = ConfigParser.ConfigParser()
     
 if command.has_key('--setup'):
     setup_monitor()
+    
+if command.has_key('--add'):
+    add_external()
 
 # Read the config file
 if not os.path.isfile( config_file ):
