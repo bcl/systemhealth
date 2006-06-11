@@ -80,7 +80,7 @@
 #              need to test meminfo on 2.6 kernel
 #
 # ------------------------------------------------------------------------
-import sys, os, string, re, traceback, ConfigParser
+import sys, os, string, re, traceback, ConfigParser, pickle
 from time import *
 from getopt import *
 
@@ -795,7 +795,6 @@ def add_external():
     except:
         config.add_section("external")
 
-
     # 3. Ask the user for the path to the executable, check that it is
     #    present and executable. display the output of it.
     ext_path = ""
@@ -811,8 +810,9 @@ def add_external():
     if answer != '':
         basename = answer
     
-    # Add it to the external section of the config file
-    config.set( 'external', basename, [graph_name, basename, ext_path] )
+    # Add it to the external section of the config file, but pickle it first
+    p = pickle.dumps([graph_name, basename, ext_path])
+    config.set( 'external', basename, p )
 
     # 6. Ask if it is a counter or a gauge (always increments, like a packet
     #    counter or indicates a level like a load or temperature).
@@ -901,6 +901,21 @@ def create_html():
             f.write("</tr><tr>\n")
             col = 0
     f.write("</tr></table><p>\n")
+
+    f.write("<b>External Sensors</b><br>")
+    f.write("<table border=1 bgcolor=#EEEEEE><tr>")
+    col = 0    
+    key_list = external_rrd.keys()
+    key_list.sort()
+    for key in key_list:
+        f.write("<td>%s<br><a href=%s.html><img src=%s%s.png></a></td>\n" % (external_rrd[key][0],external_rrd[key][1], external_rrd[key][1], rrd_time[0]) )
+        col = col + 1
+        if( col > 1 ):
+            f.write("</tr><tr>\n")
+            col = 0
+    f.write("</tr></table><p>\n")
+
+    # Write the footer
     f.write("<hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
     f.write("</center>\n")
     f.close()
@@ -966,6 +981,21 @@ def create_html():
             f.write("</tr><tr>\n")
             col = 0
     f.write("</tr></table><p>\n")
+
+    f.write("<b>External Sensors</b><br>")
+    f.write("<table border=1 bgcolor=#EEEEEE><tr>")
+    col = 0    
+    key_list = external_rrd.keys()
+    key_list.sort()
+    for key in key_list:
+        f.write("<td>%s<br><a href=%s.html><img src=%s%s.png></a></td>\n" % (external_rrd[key][0],external_rrd[key][1], external_rrd[key][1], rrd_time[1]) )
+        col = col + 1
+        if( col > 1 ):
+            f.write("</tr><tr>\n")
+            col = 0
+    f.write("</tr></table><p>\n")
+
+    # Write the footer
     f.write("<hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
     f.write("</center>\n")
     f.close()
@@ -1031,6 +1061,21 @@ def create_html():
             f.write("</tr><tr>\n")
             col = 0
     f.write("</tr></table><p>\n")
+
+    f.write("<b>Other</b><br>")
+    f.write("<table border=1 bgcolor=#EEEEEE><tr>")
+    col = 0    
+    key_list = external_rrd.keys()
+    key_list.sort()
+    for key in key_list:
+        f.write("<td>%s<br><a href=%s.html><img src=%s%s.png></a></td>\n" % (external_rrd[key][0],external_rrd[key][1], external_rrd[key][1], rrd_time[2]) )
+        col = col + 1
+        if( col > 1 ):
+            f.write("</tr><tr>\n")
+            col = 0
+    f.write("</tr></table><p>\n")
+
+    # Write the footer
     f.write("<hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
     f.write("</center>\n")
     f.close()
@@ -1098,6 +1143,21 @@ def create_html():
             f.write("</tr><tr>\n")
             col = 0
     f.write("</tr></table><p>\n")
+
+    f.write("<b>Other</b><br>")
+    f.write("<table border=1 bgcolor=#EEEEEE><tr>")
+    col = 0    
+    key_list = external_rrd.keys()
+    key_list.sort()
+    for key in key_list:
+        f.write("<td>%s<br><a href=%s.html><img src=%s%s.png></a></td>\n" % (external_rrd[key][0],external_rrd[key][1], external_rrd[key][1], rrd_time[3]) )
+        col = col + 1
+        if( col > 1 ):
+            f.write("</tr><tr>\n")
+            col = 0
+    f.write("</tr></table><p>\n")
+
+    # Write the footer
     f.write("<hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
     f.write("</center>\n")
     f.close()
@@ -1164,6 +1224,21 @@ def create_html():
             f.write("</tr><tr>\n")
             col = 0
     f.write("</tr></table><p>\n")
+
+    f.write("<b>Other</b><br>")
+    f.write("<table border=1 bgcolor=#EEEEEE><tr>")
+    col = 0    
+    key_list = external_rrd.keys()
+    key_list.sort()
+    for key in key_list:
+        f.write("<td>%s<br><a href=%s.html><img src=%s%s.png></a></td>\n" % (external_rrd[key][0],external_rrd[key][1], external_rrd[key][1], rrd_time[4]) )
+        col = col + 1
+        if( col > 1 ):
+            f.write("</tr><tr>\n")
+            col = 0
+    f.write("</tr></table><p>\n")
+
+    # Write the footer
     f.write("<hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
     f.write("</center>\n")
     f.close()
@@ -1227,6 +1302,18 @@ def create_html():
         f.write("<b>%s</b><p>" % (key) )
         for t in rrd_time:
             f.write("%s<br><img src=%s%s.png><br>\n" % (t,process_rrd[key], t) )
+        f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
+        f.write("</center>")
+        f.close()
+
+    for key in external_rrd.keys():
+        f = open( png_path + os.sep + external_rrd[key][1] + ".html", "w" )
+        f.write("<center>")
+        f.write("<b>%s</b><p>" % (external_rrd[key][0]) )
+        for t in rrd_time:
+            f.write("%s<br><img src=%s%s.png><br>\n" % (t,external_rrd[key][1], t) )
+
+        # Write the footer
         f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
         f.write("</center>")
         f.close()
@@ -1517,10 +1604,27 @@ def read_process_list( process_rrd ):
 
 def read_external():
     """
-    Read the values from the external applications
+    Read the values from the external applications and insert the data into
+    their rrd files.
     """
-    pass
-    
+    for key in external_rrd.keys():
+        try:
+            # Run the external application and grab its first line
+            output = os.popen( external_rrd[key][2] ).readline().strip()
+            rrd_data = "N:%s" % (output)
+        except:
+            # If there is a problem, just write a 0
+            rrd_data = "N:0"
+            print "ERROR: Problem running %s" % (external_rrd[key][2])
+   
+        # Run rrdtool in as secure a fashion as possible
+        rrd_file = rrd_path + os.sep + external_rrd[key][1] + ".rrd"
+        rrd_cmd = ("rrdtool","update", rrd_file, rrd_data)
+
+        if debug>0: 
+            debug_print(rrd_cmd)
+
+        pid = os.spawnv( os.P_NOWAIT, rrdtool_path, rrd_cmd)
 
 def graph_interfaces( interfaces_rrd ):
     """
@@ -1868,7 +1972,43 @@ def graph_external():
     """
     Graph the external applications
     """
-    pass
+    for key in external_rrd.keys():
+        for time in rrd_time:
+            starttime = "%s" % (time)
+            endtime = "now"
+            rrd_file = rrd_path + os.sep + external_rrd[key][1] + ".rrd"
+            png_file = png_path + os.sep + external_rrd[key][1] + time + ".png"
+
+            ext_print = " GPRINT:value:MIN:\"%-8s %%8.2lf%%s \"" % (external_rrd[key][0])
+            width_str = "%d" % (width)
+            height_str = "%d" % (height)
+
+            rrd_cmd = ( rrdtool_path, " graph ", png_file, " --imgformat PNG",
+                        " --start '", starttime, 
+                        "' --end '", endtime, "' ",
+                        " --width ", width_str, 
+                        " --height ", height_str, 
+                        " DEF:value=", rrd_file, ":value:AVERAGE",
+                        " LINE2:value#0000FF:'",external_rrd[key][0],"\\c'",
+                        " COMMENT:\"              \"",
+                        " COMMENT:\"           Min          Max          Avg         Last\\n\"",
+                        " COMMENT:\"           \"",
+                        ext_print,
+                        " GPRINT:value:MAX:\" %8.2lf%s \"",
+                        " GPRINT:value:AVERAGE:\" %8.2lf%s \"",
+                        " GPRINT:value:LAST:\" %8.2lf%s \\n\"",
+                        " COMMENT:\"Last Updated ", ctime(), "\\c\""
+                     ) 
+
+            rrd_string = ""
+            for i in rrd_cmd:
+                rrd_string = rrd_string + i
+
+            if debug>0: 
+                debug_print(rrd_string)
+
+            output = os.popen( rrd_string ).readlines()
+        
 
 
 # ========================================================================
@@ -1913,11 +2053,6 @@ if not os.path.isfile( config_file ):
     sys.exit(-1)
 config.read( config_file )
 
-# Add an external command
-if command.has_key('--add'):
-    add_external()
-
-
 width        = int(config.get("graphs", "width"))
 height       = int(config.get("graphs", "height"))
 
@@ -1930,6 +2065,11 @@ png_path     = config.get("paths","png_path")
 meminfo_rrd  = config.get("paths","meminfo_rrd")
 loadavg_rrd  = config.get("paths","loadavg_rrd")
 uptime_rrd   = config.get("paths","uptime_rrd")
+
+
+# Add an external command
+if command.has_key('--add'):
+    add_external()
 
 # Get the interfaces
 interfaces_rrd = {}
@@ -1948,6 +2088,13 @@ process_rrd = {}
 processes = config.options("processes")
 for p in processes:
     process_rrd[p] = config.get("processes",p)
+
+# Get the external commands
+external_rrd = {}
+external = config.options("external")
+for e in external:
+    external_rrd[e] = pickle.loads(config.get("external",e))
+
 
 # Create HTML pages after all the info has been reloaded from config
 if command.has_key('--setup') or command.has_key("--html"):
