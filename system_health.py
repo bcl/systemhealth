@@ -435,6 +435,64 @@ def create_process( rrd_file ):
         output = os.popen( rrd_string ).readlines()
 
 
+def create_gauge( rrd_file ):
+    """
+    Create a a simple gauge RRD file
+    """
+    if os.path.isfile( rrd_file ):
+        print "%s exists, skipping creation" % (rrd_file)
+    else:
+        rrd_cmd = ( rrdtool_path,  "create", rrd_file,
+                    "DS:value:GAUGE:600:U:U",
+                    "RRA:AVERAGE:0.5:1:676",
+                    "RRA:AVERAGE:0.5:6:672",
+                    "RRA:AVERAGE:0.5:24:720",
+                    "RRA:AVERAGE:0.5:288:730",
+                    "RRA:MAX:0.5:1:676",
+                    "RRA:MAX:0.5:6:672",
+                    "RRA:MAX:0.5:24:720",
+                    "RRA:MAX:0.5:288:797",
+                  )
+
+        if debug>0: 
+            debug_print(rrd_cmd)
+            
+        rrd_string = ""
+        for i in rrd_cmd:
+            rrd_string = rrd_string + i + " "
+        
+        output = os.popen( rrd_string ).readlines()
+
+
+def create_counter( rrd_file ):
+    """
+    Create a a simple counter RRD file
+    """
+    if os.path.isfile( rrd_file ):
+        print "%s exists, skipping creation" % (rrd_file)
+    else:
+        rrd_cmd = ( rrdtool_path,  "create", rrd_file,
+                    "DS:value:COUNTER:600:U:U",
+                    "RRA:AVERAGE:0.5:1:676",
+                    "RRA:AVERAGE:0.5:6:672",
+                    "RRA:AVERAGE:0.5:24:720",
+                    "RRA:AVERAGE:0.5:288:730",
+                    "RRA:MAX:0.5:1:676",
+                    "RRA:MAX:0.5:6:672",
+                    "RRA:MAX:0.5:24:720",
+                    "RRA:MAX:0.5:288:797",
+                  )
+
+        if debug>0: 
+            debug_print(rrd_cmd)
+            
+        rrd_string = ""
+        for i in rrd_cmd:
+            rrd_string = rrd_string + i + " "
+        
+        output = os.popen( rrd_string ).readlines()
+
+
 def ask_number( prompt, default ):
     """
     Prompt the user to enter a number. If enter it hit the default is
@@ -708,7 +766,10 @@ def setup_monitor():
             # Add it to the interfaces section of the config file
             config.set( 'processes', process, basename )
             create_process( rrd_path + os.sep + basename + ".rrd" )
-   
+
+    # Placeholder for external programs
+    config.add_section("external")    
+
     # Write the new config file
     config.write(cf)
     cf.close()
@@ -721,8 +782,58 @@ def add_external():
     
     Each external program needs a 'name' used to label the rrd graph, a
     path to the executable, and a name for the rrd file to store the data in.
+
+    The config file must have been previously read into config object
     """
-    pass
+    rrd_path = config.get("paths","rrd_path")
+    
+    
+    # 2. Add an external section if there isn't one already
+    # How to check if a section exists?        
+    try:
+        config.options("external")
+    except:
+        config.add_section("external")
+
+
+    # 3. Ask the user for the path to the executable, check that it is
+    #    present and executable. display the output of it.
+    ext_path = ""
+    while not os.path.isfile(ext_path):
+        ext_path = raw_input("Enter /path/filename to external program : ")
+
+    # 4. Ask for a name for the graph
+    graph_name = raw_input( "Name for graph: " )
+
+    # 5. Ask for a name for the rrd file (use name as a suggestion)
+    basename = graph_name
+    answer = raw_input( "base name for .rrd and .png: [%s] " % (basename))
+    if answer != '':
+        basename = answer
+    
+    # Add it to the external section of the config file
+    config.set( 'external', basename, [graph_name, basename, ext_path] )
+
+    # 6. Ask if it is a counter or a gauge (always increments, like a packet
+    #    counter or indicates a level like a load or temperature).
+    answer = ""
+    while answer not in ['g','G','c','C']:
+        answer = raw_input( "Is the output a Gauge or Counter (G/C)? : " )
+        if answer in ['g','G']:
+            create_gauge( rrd_path + os.sep + basename + ".rrd")
+        elif answer in ['c','C']:
+            create_counter( rrd_path + os.sep + basename + ".rrd")
+        else:
+            print "Please enter G for GAUGE or C for COUNTER"
+
+    # 7. Write changes to the config file
+    try:
+        cf = open( config_file, "w" )
+        config.write(cf)
+        cf.close()
+    except:
+        print "Opening %s for writing failed. " % (config_file)
+        sys.exit(-1)
     
 
 def create_html():
@@ -1404,6 +1515,13 @@ def read_process_list( process_rrd ):
         pid = os.spawnv( os.P_NOWAIT, rrdtool_path, rrd_cmd)
 
 
+def read_external():
+    """
+    Read the values from the external applications
+    """
+    pass
+    
+
 def graph_interfaces( interfaces_rrd ):
     """
     Create .png graph of each of the interfaces
@@ -1745,6 +1863,12 @@ def graph_process_list( process_rrd ):
                 debug_print(rrd_string)
 
             output = os.popen( rrd_string ).readlines()
+            
+def graph_external():
+    """
+    Graph the external applications
+    """
+    pass
 
 
 # ========================================================================
@@ -1778,19 +1902,22 @@ for i,value in opts:
 
 config = ConfigParser.ConfigParser()
     
+# Setup a new monitor
 if command.has_key('--setup'):
     setup_monitor()
-    
-if command.has_key('--add'):
-    add_external()
 
-# Read the config file
+# Read the config file (new if --setup was run)
 if not os.path.isfile( config_file ):
     print "ERROR: Configuration file (%s) not found." % (config_file)
     print "ERROR: Do you need to run --setup?"
     sys.exit(-1)
-
 config.read( config_file )
+
+# Add an external command
+if command.has_key('--add'):
+    add_external()
+
+
 width        = int(config.get("graphs", "width"))
 height       = int(config.get("graphs", "height"))
 
@@ -1877,6 +2004,7 @@ if command.has_key('--log'):
     read_drive_space( drives_rrd )
     read_drive_inodes( drives_rrd )
     read_process_list( process_rrd )
+    read_external()
     
 if command.has_key('--graph'):
     graph_interfaces( interfaces_rrd )
@@ -1886,3 +2014,5 @@ if command.has_key('--graph'):
     graph_drive_space( drives_rrd )
     graph_drive_inodes( drives_rrd )
     graph_process_list( process_rrd )
+    graph_external()
+    
