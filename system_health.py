@@ -2072,7 +2072,6 @@ uptime_rrd   = config.get("paths","uptime_rrd")
 # Add an external command
 if command.has_key('--add'):
     add_external()
-    command['--html'] = True
 
 # Get the interfaces
 interfaces_rrd = {}
