@@ -799,7 +799,8 @@ def add_external():
     #    present and executable. display the output of it.
     ext_path = ""
     while not os.path.isfile(ext_path):
-        ext_path = raw_input("Enter /path/filename to external program : ")
+        ext_cmd = raw_input("Enter '/path/filename args' to external program : ")
+        ext_path = ext_cmd.split()[0]
 
     # 4. Ask for a name for the graph
     graph_name = raw_input( "Name for graph: " )
@@ -811,7 +812,7 @@ def add_external():
         basename = answer
     
     # Add it to the external section of the config file, but pickle it first
-    p = pickle.dumps([graph_name, basename, ext_path])
+    p = pickle.dumps([graph_name, basename, ext_cmd])
     config.set( 'external', basename, p )
 
     # 6. Ask if it is a counter or a gauge (always increments, like a packet
@@ -902,7 +903,7 @@ def create_html():
             col = 0
     f.write("</tr></table><p>\n")
 
-    f.write("<b>External Sensors</b><br>")
+    f.write("<b>Other</b><br>")
     f.write("<table border=1 bgcolor=#EEEEEE><tr>")
     col = 0    
     key_list = external_rrd.keys()
@@ -916,7 +917,7 @@ def create_html():
     f.write("</tr></table><p>\n")
 
     # Write the footer
-    f.write("<hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
+    f.write("<hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/software/systemhealth/\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
     f.write("</center>\n")
     f.close()
 
@@ -982,7 +983,7 @@ def create_html():
             col = 0
     f.write("</tr></table><p>\n")
 
-    f.write("<b>External Sensors</b><br>")
+    f.write("<b>Other</b><br>")
     f.write("<table border=1 bgcolor=#EEEEEE><tr>")
     col = 0    
     key_list = external_rrd.keys()
@@ -996,7 +997,7 @@ def create_html():
     f.write("</tr></table><p>\n")
 
     # Write the footer
-    f.write("<hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
+    f.write("<hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/software/systemhealth/\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
     f.write("</center>\n")
     f.close()
 
@@ -1076,7 +1077,7 @@ def create_html():
     f.write("</tr></table><p>\n")
 
     # Write the footer
-    f.write("<hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
+    f.write("<hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/software/systemhealth/\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
     f.write("</center>\n")
     f.close()
 
@@ -1158,7 +1159,7 @@ def create_html():
     f.write("</tr></table><p>\n")
 
     # Write the footer
-    f.write("<hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
+    f.write("<hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/software/systemhealth/\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
     f.write("</center>\n")
     f.close()
 
@@ -1239,7 +1240,7 @@ def create_html():
     f.write("</tr></table><p>\n")
 
     # Write the footer
-    f.write("<hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
+    f.write("<hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/software/systemhealth/\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
     f.write("</center>\n")
     f.close()
 
@@ -1254,7 +1255,7 @@ def create_html():
         f.write("<b>%s</b><p>" % (key) )
         for t in rrd_time:
             f.write("%s<br><img src=%s%s.png><br>\n" % (t,interfaces_rrd[key], t) )
-    f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
+    f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/software/systemhealth/\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
     f.write("</center>")
     f.close()
    
@@ -1263,7 +1264,7 @@ def create_html():
     f.write("<b>loadavg</b><p>" )
     for t in rrd_time:
         f.write("%s<br><img src=%s%s.png><br>\n" % (t,loadavg_rrd, t) )
-    f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
+    f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/software/systemhealth/\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
     f.write("</center>")
     f.close()
 
@@ -1272,7 +1273,7 @@ def create_html():
     f.write("<b>uptime</b><p>" )
     for t in rrd_time:
         f.write("%s<br><img src=%s%s.png><br>\n" % (t,uptime_rrd, t) )
-    f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
+    f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/software/systemhealth/\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
     f.write("</center>")
     f.close()
             
@@ -1281,7 +1282,7 @@ def create_html():
     f.write("<b>meminfo</b><p>" )
     for t in rrd_time:
         f.write("%s<br><img src=%s%s.png><br>\n" % (t,meminfo_rrd, t) )
-    f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
+    f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/software/systemhealth/\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
     f.write("</center>")
     f.close()
 
@@ -1292,7 +1293,7 @@ def create_html():
         for t in rrd_time:
             f.write("%s<br><img src=%s_space%s.png><br>\n" % (t,drives_rrd[key], t) )
             f.write("<img src=%s_inodes%s.png><br>\n" % (drives_rrd[key], t) )
-        f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
+        f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/software/systemhealth/\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
         f.write("</center>")
         f.close()
 
@@ -1302,7 +1303,7 @@ def create_html():
         f.write("<b>%s</b><p>" % (key) )
         for t in rrd_time:
             f.write("%s<br><img src=%s%s.png><br>\n" % (t,process_rrd[key], t) )
-        f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
+        f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/software/systemhealth/\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
         f.write("</center>")
         f.close()
 
@@ -1314,7 +1315,7 @@ def create_html():
             f.write("%s<br><img src=%s%s.png><br>\n" % (t,external_rrd[key][1], t) )
 
         # Write the footer
-        f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/systemhealth.php\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
+        f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/software/systemhealth/\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
         f.write("</center>")
         f.close()
 
@@ -1979,7 +1980,8 @@ def graph_external():
             rrd_file = rrd_path + os.sep + external_rrd[key][1] + ".rrd"
             png_file = png_path + os.sep + external_rrd[key][1] + time + ".png"
 
-            ext_print = " GPRINT:value:MIN:\"%-8s %%8.2lf%%s \"" % (external_rrd[key][0])
+            name_width = len(external_rrd[key][0])
+            ext_print = " GPRINT:value:MIN:\"%s %%8.2lf%%s \"" % (external_rrd[key][0])
             width_str = "%d" % (width)
             height_str = "%d" % (height)
 
@@ -1990,9 +1992,9 @@ def graph_external():
                         " --height ", height_str, 
                         " DEF:value=", rrd_file, ":value:AVERAGE",
                         " LINE2:value#0000FF:'",external_rrd[key][0],"\\c'",
-                        " COMMENT:\"              \"",
-                        " COMMENT:\"           Min          Max          Avg         Last\\n\"",
-                        " COMMENT:\"           \"",
+                        " COMMENT:\""+" "*name_width+"       \"",
+                        " COMMENT:\"Min          Max          Avg         Last\\n\"",
+                        " COMMENT:\""+" "+"\"",
                         ext_print,
                         " GPRINT:value:MAX:\" %8.2lf%s \"",
                         " GPRINT:value:AVERAGE:\" %8.2lf%s \"",
@@ -2070,6 +2072,7 @@ uptime_rrd   = config.get("paths","uptime_rrd")
 # Add an external command
 if command.has_key('--add'):
     add_external()
+    command['--html'] = True
 
 # Get the interfaces
 interfaces_rrd = {}
