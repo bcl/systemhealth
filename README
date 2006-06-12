@@ -1,5 +1,5 @@
 System Health Monitor
-Copyright 2004 by Brian C. Lane <bcl@brianlane.com>
+Copyright 2004-2006 by Brian C. Lane <bcl@brianlane.com>
 All Rights Reserved
 Licensed under GPL v2.0
 
@@ -15,6 +15,18 @@ your meminfo.rrd file and create a new one with systemhealth.py --check,
 this is due to the kernel folks adding a new line to /proc/meminfo in
 v2.6.10 kernel.
 
+UPDATE v0.7
+You can now add the output of an external program to System Health. Use the
+--add argument and follow the prompts. You can pass arguments to the 
+executable and specify the title, rrd filename and type of value.
+
+The output of the program must be a single number on a single line. This
+value will be inserted directly into the RRD database for graphing. The html
+pages are also automatically updated to include the new graphs.
+
+The graph type of gauge is used for numbers that represent a level, like a
+temperature or a system load. Counter type is for number that are always
+incrementing, like a packet count.
 
 
 This program requires a few things to work correctly.
@@ -101,9 +113,12 @@ v0.6 Changes the license to GPL v2.0 and fixes a problem with newer
      Fixed command line processing so that --log and --graph can be used
      at the same time.
 
+v0.7 Added external program graphs. See the UPDATE at the top of this file
+
+
 The License
 
-I have changed (as of release v0.6.0) licenses to GPL v2.0, although
+I have changed (as of release v0.6) licenses to GPL v2.0, although
 donations are still greatly appreciated and help to motivate me to improve
 and maintain my software. Donations can be made via paypal payment sent to
 bcl@brianlane.com
@@ -111,5 +126,5 @@ bcl@brianlane.com
 Thanks for using my software,
 
 Brian C. Lane
-February 1, 2005
+June 11, 2006
 The Basement
