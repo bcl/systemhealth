@@ -1669,7 +1669,7 @@ def graph_interfaces( interfaces_rrd ):
                         " GPRINT:out_bits:AVERAGE:\" %8.2lf%s \"",
                         " GPRINT:out_bits:LAST:\" %8.2lf%s \\n\"",
                         " COMMENT:\"           \"",
-                        " COMMENT:\"Last Updated ", ctime(), "\\c\""
+                        " COMMENT:\"Last Updated ", ctime().replace(":","\:"), "\\c\""
                       )
 
 
@@ -1730,7 +1730,7 @@ def graph_loadavg( loadavg_rrd ):
                     " GPRINT:load15:MAX:\" %8.2lf  \"",
                     " GPRINT:load15:AVERAGE:\" %8.2lf  \"",
                     " GPRINT:load15:LAST:\" %8.2lf  \\n\"",
-                    " COMMENT:\"Last Updated ", ctime(), " \\c\""
+                    " COMMENT:\"Last Updated ", ctime().replace(":","\:"), " \\c\""
                  ) 
 
         if debug>0: 
@@ -1779,7 +1779,7 @@ def graph_uptime( uptime_rrd ):
                     " GPRINT:idletime:AVERAGE:\" %8.2lf%s \"",
                     " GPRINT:idletime:LAST:\" %8.2lf%s \\n\"",
                     " COMMENT:\"           \"",
-                    " COMMENT:\"Last Updated ", ctime(), " \\c\""
+                    " COMMENT:\"Last Updated ", ctime().replace(":","\:"), " \\c\""
                  ) 
 
         if debug>0: 
@@ -1827,7 +1827,7 @@ def graph_meminfo( meminfo_rrd ):
                     " GPRINT:SwapFreeM:MAX:\" %8.2lf%s \"",
                     " GPRINT:SwapFreeM:AVERAGE:\" %8.2lf%s \"",
                     " GPRINT:SwapFreeM:LAST:\" %8.2lf%s \\n\"",
-                    " COMMENT:\"Last Updated ", ctime(), "\\c\""
+                    " COMMENT:\"Last Updated ", ctime().replace(":","\:"), "\\c\""
                  ) 
 
         rrd_string = ""
@@ -1872,7 +1872,7 @@ def graph_drive_space( drives_rrd ):
                         " GPRINT:AvailableM:MAX:\" %6.2lf%s \"",
                         " GPRINT:AvailableM:AVERAGE:\" %6.2lf%s \"",
                         " GPRINT:AvailableM:LAST:\" %6.2lf%s \\n\"",
-                        " COMMENT:\"Last Updated ", ctime(), "\\c\""
+                        " COMMENT:\"Last Updated ", ctime().replace(":","\:"), "\\c\""
                      ) 
 
             rrd_string = ""
@@ -1915,7 +1915,7 @@ def graph_drive_inodes( drives_rrd ):
                         " GPRINT:IFree:MAX:\" %6.2lf%s \"",
                         " GPRINT:IFree:AVERAGE:\" %6.2lf%s \"",
                         " GPRINT:IFree:LAST:\" %6.2lf%s \\n\"",
-                        " COMMENT:\"Last Updated ", ctime(), "\\c\""
+                        " COMMENT:\"Last Updated ", ctime().replace(":","\:"), "\\c\""
                      ) 
 
             rrd_string = ""
@@ -1957,7 +1957,7 @@ def graph_process_list( process_rrd ):
                         " GPRINT:running:MAX:\" %8.2lf%s \"",
                         " GPRINT:running:AVERAGE:\" %8.2lf%s \"",
                         " GPRINT:running:LAST:\" %8.2lf%s \\n\"",
-                        " COMMENT:\"Last Updated ", ctime(), "\\c\""
+                        " COMMENT:\"Last Updated ", ctime().replace(":","\:"), "\\c\""
                      ) 
 
             rrd_string = ""
@@ -1999,7 +1999,7 @@ def graph_external():
                         " GPRINT:value:MAX:\" %8.2lf%s \"",
                         " GPRINT:value:AVERAGE:\" %8.2lf%s \"",
                         " GPRINT:value:LAST:\" %8.2lf%s \\n\"",
-                        " COMMENT:\"Last Updated ", ctime(), "\\c\""
+                        " COMMENT:\"Last Updated ", ctime().replace(":","\:"), "\\c\""
                      ) 
 
             rrd_string = ""
