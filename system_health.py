@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # ------------------------------------------------------------------------
-# Linux System Health Monitoring v0.7
+# Linux System Health Monitoring v0.8
 # by Brian C. Lane
 # Copyright 2005-2006 by Brian C. Lane
 # All Rights Reserved
@@ -21,6 +21,9 @@
 # 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
 #
 # ------------------------------------------------------------------------
+# 09/02/2006   Changed ctime() call to ctime().replace(":","\\:") to 
+#              escape the : character for the COMMENT sections.
+#
 # 06/10/2006   Adding external call feature. This will allow it to call
 # bcl          an external program which returns a single numeric ASCII
 #              value for inclusion into a rrdtool graph. The external
@@ -84,7 +87,7 @@ import sys, os, string, re, traceback, ConfigParser, pickle
 from time import *
 from getopt import *
 
-release_version = "v0.7"
+release_version = "v0.8"
 
 # turn on a bunch of debugging prints
 debug = 0

@@ -15,7 +15,11 @@ your meminfo.rrd file and create a new one with systemhealth.py --check,
 this is due to the kernel folks adding a new line to /proc/meminfo in
 v2.6.10 kernel.
 
-UPDATE v0.7
+UPDATE v0.8
+Changed ctime() call to ctime().replace(":","\\:") to escape the : character
+for the rrdtool COMMENT sections.
+
+v0.7
 You can now add the output of an external program to System Health. Use the
 --add argument and follow the prompts. You can pass arguments to the 
 program and specify the title, rrd filename and type of value.
