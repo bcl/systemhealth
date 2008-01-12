@@ -1,5 +1,5 @@
 System Health Monitor
-Copyright 2004-2006 by Brian C. Lane <bcl@brianlane.com>
+Copyright 2004-2008 by Brian C. Lane <bcl@brianlane.com>
 All Rights Reserved
 Licensed under GPL v2.0
 
@@ -15,7 +15,12 @@ your meminfo.rrd file and create a new one with systemhealth.py --check,
 this is due to the kernel folks adding a new line to /proc/meminfo in
 v2.6.10 kernel.
 
-UPDATE v0.8
+UPDATE v0.9
+Changed the spacing on the COMMENT strings to work better with the larger font
+used by more recent versions of rrdtool. Added a try/except check for external
+config options since old versions won't have that.
+
+v0.8
 Changed ctime() call to ctime().replace(":","\\:") to escape the : character
 for the rrdtool COMMENT sections.
 
@@ -93,7 +98,7 @@ $ crontab -e
 
 and add the following line:
 
-*/5 * * * *     /home/health/bin/system_health.py --log --graph 2>&1 /dev/null
+*/5 * * * *     /home/health/bin/system_health.py --log --graph 2> /dev/null >/dev/null
 
 
 After it is running you can add other processes, drives and interfaces to
@@ -137,5 +142,4 @@ bcl@brianlane.com
 Thanks for using my software,
 
 Brian C. Lane
-June 11, 2006
-The Basement
+January 12, 2008

@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
 # ------------------------------------------------------------------------
-# Linux System Health Monitoring v0.8
+# Linux System Health Monitoring v0.9
 # by Brian C. Lane
-# Copyright 2005-2006 by Brian C. Lane
+# Copyright 2005-2008 by Brian C. Lane
 # All Rights Reserved
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -21,6 +21,10 @@
 # 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
 #
 # ------------------------------------------------------------------------
+# 01/12/2008   Changed comment strings to align better with newer rrdtool
+#              fonts. Added try/except on external config options since
+#              older versions will not have that.
+#
 # 09/02/2006   Changed ctime() call to ctime().replace(":","\\:") to 
 #              escape the : character for the COMMENT sections.
 #
@@ -87,7 +91,7 @@ import sys, os, string, re, traceback, ConfigParser, pickle
 from time import *
 from getopt import *
 
-release_version = "v0.8"
+release_version = "v0.9"
 
 # turn on a bunch of debugging prints
 debug = 0
@@ -153,7 +157,7 @@ meminfo_fields = [
 def usage():
     print "System Health Monitor %s" % (release_version)
     print "by Brian C. Lane <bcl@brianlane.com>"
-    print "Copyright 2005-2006 by Brian C. Lane"
+    print "Copyright 2005-2008 by Brian C. Lane"
     print "All Rights Reserved"
     print "Released under GPL v2.0"
     print "See LICENSE and README for details\n\n"
@@ -1659,19 +1663,15 @@ def graph_interfaces( interfaces_rrd ):
                         " CDEF:out_bits=out_bytes,8,*",
                         " AREA:in_bits#00FF00:'Input bits/s'",
                         " LINE1:out_bits#0000FF:'Output bits/s\\c'",
-                        " COMMENT:\"              \"",
-                        " COMMENT:\"           Min          Max          Avg         Last\\n\"",
-                        " COMMENT:\"           \"",
+                        " COMMENT:\"               Min          Max          Avg          Last\\n\"",
                         in_print,
                         " GPRINT:in_bits:MAX:\" %8.2lf%s \"",
                         " GPRINT:in_bits:AVERAGE:\" %8.2lf%s \"",
                         " GPRINT:in_bits:LAST:\" %8.2lf%s \\n\"",
-                        " COMMENT:\"           \"",
                         out_print,
                         " GPRINT:out_bits:MAX:\" %8.2lf%s \"",
                         " GPRINT:out_bits:AVERAGE:\" %8.2lf%s \"",
                         " GPRINT:out_bits:LAST:\" %8.2lf%s \\n\"",
-                        " COMMENT:\"           \"",
                         " COMMENT:\"Last Updated ", ctime().replace(":","\:"), "\\c\""
                       )
 
@@ -1716,19 +1716,15 @@ def graph_loadavg( loadavg_rrd ):
                     " AREA:load1#00FF00:'1 Min.'",
                     " LINE1:load5#0000FF:'5 Min.'",
                     " LINE1:load15#FF0000:'15 Min.\\c'",
-                    " COMMENT:\"              \"",
-                    " COMMENT:\"           Min          Max          Avg         Last\\n\"",
-                    " COMMENT:\"           \"",
+                    " COMMENT:\"              Min          Max           Avg         Last\\n\"",
                     " GPRINT:load1:MIN:\"1 Min.   %8.2lf  \"",
                     " GPRINT:load1:MAX:\" %8.2lf  \"",
                     " GPRINT:load1:AVERAGE:\" %8.2lf  \"",
                     " GPRINT:load1:LAST:\" %8.2lf  \\n\"",
-                    " COMMENT:\"           \"",
                     " GPRINT:load5:MIN:\"5 Min.   %8.2lf  \"",
                     " GPRINT:load5:MAX:\" %8.2lf  \"",
                     " GPRINT:load5:AVERAGE:\" %8.2lf  \"",
                     " GPRINT:load5:LAST:\" %8.2lf  \\n\"",
-                    " COMMENT:\"           \"",
                     " GPRINT:load15:MIN:\"15 Min.  %8.2lf  \"",
                     " GPRINT:load15:MAX:\" %8.2lf  \"",
                     " GPRINT:load15:AVERAGE:\" %8.2lf  \"",
@@ -1769,19 +1765,15 @@ def graph_uptime( uptime_rrd ):
                     " DEF:idletime=", rrd_file, ":idletime:AVERAGE",
                     " AREA:uptime#00FF00:'uptime'",
                     " LINE2:idletime#0000FF:'idletime\\c'",
-                    " COMMENT:\"              \"",
-                    " COMMENT:\"             Min          Max          Avg         Last\\n\"",
-                    " COMMENT:\"           \"",
+                    " COMMENT:\"                 Min          Max          Avg          Last\\n\"",
                     " GPRINT:uptime:MIN:\"uptime     %8.2lf%s \"",
                     " GPRINT:uptime:MAX:\" %8.2lf%s \"",
                     " GPRINT:uptime:AVERAGE:\" %8.2lf%s \"",
                     " GPRINT:uptime:LAST:\" %8.2lf%s \\n\"",
-                    " COMMENT:\"           \"",
                     " GPRINT:idletime:MIN:\"idletime   %8.2lf%s \"",
                     " GPRINT:idletime:MAX:\" %8.2lf%s \"",
                     " GPRINT:idletime:AVERAGE:\" %8.2lf%s \"",
                     " GPRINT:idletime:LAST:\" %8.2lf%s \\n\"",
-                    " COMMENT:\"           \"",
                     " COMMENT:\"Last Updated ", ctime().replace(":","\:"), " \\c\""
                  ) 
 
@@ -1818,14 +1810,11 @@ def graph_meminfo( meminfo_rrd ):
                     " CDEF:SwapFreeM=SwapFreeB,1024,*",
                     " AREA:MemFreeM#00FF00:'Available Memory'",
                     " LINE2:SwapFreeM#0000FF:'Available Swap\\c'",
-                    " COMMENT:\"              \"",
-                    " COMMENT:\"           Min          Max          Avg         Last\\n\"",
-                    " COMMENT:\"           \"",
+                    " COMMENT:\"               Min          Max          Avg          Last\\n\"",
                     " GPRINT:MemFreeM:MIN:\"MemFree  %8.2lf%s \"",
                     " GPRINT:MemFreeM:MAX:\" %8.2lf%s \"",
                     " GPRINT:MemFreeM:AVERAGE:\" %8.2lf%s \"",
                     " GPRINT:MemFreeM:LAST:\" %8.2lf%s \\n\"",
-                    " COMMENT:\"           \"",
                     " GPRINT:SwapFreeM:MIN:\"SwapFree %8.2lf%s \"",
                     " GPRINT:SwapFreeM:MAX:\" %8.2lf%s \"",
                     " GPRINT:SwapFreeM:AVERAGE:\" %8.2lf%s \"",
@@ -1868,9 +1857,7 @@ def graph_drive_space( drives_rrd ):
                         " DEF:Available=", rrd_file, ":Available:AVERAGE",
                         " CDEF:AvailableM=Available,1024,*",
                         " AREA:AvailableM#00FF00:'Available Space\\c'",
-                        " COMMENT:\"              \"",
-                        " COMMENT:\"                Min        Max        Avg       Last\\n\"",
-                        " COMMENT:\"           \"",
+                        " COMMENT:\"                    Min        Max        Avg        Last\\n\"",
                         drive_print,
                         " GPRINT:AvailableM:MAX:\" %6.2lf%s \"",
                         " GPRINT:AvailableM:AVERAGE:\" %6.2lf%s \"",
@@ -1911,9 +1898,7 @@ def graph_drive_inodes( drives_rrd ):
                         " --height ", height_str, 
                         " DEF:IFree=", rrd_file, ":IFree:AVERAGE",
                         " AREA:IFree#00FF00:'Free Inodes\\c'",
-                        " COMMENT:\"              \"",
-                        " COMMENT:\"                Min        Max        Avg       Last\\n\"",
-                        " COMMENT:\"           \"",
+                        " COMMENT:\"                   Min        Max        Avg        Last\\n\"",
                         drive_print,
                         " GPRINT:IFree:MAX:\" %6.2lf%s \"",
                         " GPRINT:IFree:AVERAGE:\" %6.2lf%s \"",
@@ -1942,7 +1927,7 @@ def graph_process_list( process_rrd ):
             rrd_file = rrd_path + os.sep + process_rrd[key] + ".rrd"
             png_file = png_path + os.sep + process_rrd[key] + time + ".png"
 
-            proc_print = " GPRINT:running:MIN:\"%-8s %%8.2lf%%s \"" % (key)
+            proc_print = " GPRINT:running:MIN:\"%-15s %%6.2lf%%s \"" % (key)
             width_str = "%d" % (width)
             height_str = "%d" % (height)
 
@@ -1953,13 +1938,11 @@ def graph_process_list( process_rrd ):
                         " --height ", height_str, 
                         " DEF:running=", rrd_file, ":running:AVERAGE",
                         " LINE2:running#0000FF:'",key,"\\c'",
-                        " COMMENT:\"              \"",
-                        " COMMENT:\"           Min          Max          Avg         Last\\n\"",
-                        " COMMENT:\"           \"",
+                        " COMMENT:\"                   Min        Max        Avg        Last\\n\"",
                         proc_print,
-                        " GPRINT:running:MAX:\" %8.2lf%s \"",
-                        " GPRINT:running:AVERAGE:\" %8.2lf%s \"",
-                        " GPRINT:running:LAST:\" %8.2lf%s \\n\"",
+                        " GPRINT:running:MAX:\" %6.2lf%s \"",
+                        " GPRINT:running:AVERAGE:\" %6.2lf%s \"",
+                        " GPRINT:running:LAST:\" %6.2lf%s \\n\"",
                         " COMMENT:\"Last Updated ", ctime().replace(":","\:"), "\\c\""
                      ) 
 
@@ -2096,10 +2079,12 @@ for p in processes:
 
 # Get the external commands
 external_rrd = {}
-external = config.options("external")
-for e in external:
-    external_rrd[e] = pickle.loads(config.get("external",e))
-
+try:
+    external = config.options("external")
+    for e in external:
+        external_rrd[e] = pickle.loads(config.get("external",e))
+except:
+    pass
 
 # Create HTML pages after all the info has been reloaded from config
 if command.has_key('--setup') or command.has_key("--html"):
