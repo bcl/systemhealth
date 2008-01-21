@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # ------------------------------------------------------------------------
-# Linux System Health Monitoring v0.9
+# Linux System Health Monitoring v1.0
 # by Brian C. Lane
 # Copyright 2005-2008 by Brian C. Lane
 # All Rights Reserved
@@ -21,6 +21,9 @@
 # 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
 #
 # ------------------------------------------------------------------------
+# 01/20/2008   Added --new which checks for new processes and prompts
+#              to add them to the current configuration.
+#
 # 01/12/2008   Changed comment strings to align better with newer rrdtool
 #              fonts. Added try/except on external config options since
 #              older versions will not have that.
@@ -172,6 +175,7 @@ def usage():
     print "             config file and create the missing rrd files"
     print "  --add      Add an external program. It should return a single"
     print "             ASCII number (integer or float)"
+    print "  --new      Check for new processes and prompt to add missing ones."
 
 
 # ------------------------------------------------------------------------
@@ -780,6 +784,61 @@ def setup_monitor():
     # Write the new config file
     config.write(cf)
     cf.close()
+
+
+def new_processes(processes):
+    '''
+    Check for new processes and prompt to add them
+    '''
+    global rrdtool_path
+    global ps_path
+
+    # Available processes
+    ps_cmd = "%s -A -o comm --no-headers" % (ps_path)
+    ps = os.popen(ps_cmd)
+    
+    # read everything
+    lines = ps.readlines()
+    ps.close()
+    
+    process_list = []
+    # Unique list of processes
+    for line in lines:
+        # strip \n
+        line = line[:-1]
+        
+        # If its not already in the list, add it
+        if line not in process_list:
+            process_list.append(line)
+            
+    process_list.sort()
+
+    for process in process_list:
+        if process in processes:
+            continue
+            
+        # Prompt user to monitor this process
+        answer = raw_input( "Monitor %s: (y/N)" % (process)).lower()
+
+        if answer == 'y':
+            basename = process
+                
+            answer = raw_input( "base name for .rrd and .png: [%s] " % (basename))
+
+            if answer != '':
+                basename = answer
+    
+            # Add it to the interfaces section of the config file
+            config.set( 'processes', process, basename )
+            create_process( rrd_path + os.sep + basename + ".rrd" )
+
+    try:
+        cf = open( config_file, "w" )
+        config.write(cf)
+        cf.close()
+    except:
+        print "Opening %s for writing failed. " % (config_file)
+        sys.exit(-1)
 
 
 def add_external():
@@ -2083,6 +2142,10 @@ try:
         external_rrd[e] = pickle.loads(config.get("external",e))
 except:
     pass
+
+# Add new processes
+if command.has_key('--new'):
+    new_processes(processes)
 
 # Create HTML pages after all the info has been reloaded from config
 if command.has_key('--setup') or command.has_key("--html"):
