@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
 # ------------------------------------------------------------------------
-# Linux System Health Monitoring v1.0
+# Linux System Health Monitoring v1.1
 # by Brian C. Lane
-# Copyright 2005-2008 by Brian C. Lane
+# Copyright 2005-2009 by Brian C. Lane
 # All Rights Reserved
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -21,6 +21,9 @@
 # 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
 #
 # ------------------------------------------------------------------------
+# 07/02/2009   Adding support for output of nut (Network UPS Tools) upsc
+#              status command.
+#
 # 01/20/2008   Added --new which checks for new processes and prompts
 #              to add them to the current configuration.
 #
@@ -94,7 +97,11 @@ import sys, os, string, re, traceback, ConfigParser, pickle
 from time import *
 from getopt import *
 
-release_version = "v0.9"
+
+# Diagnostic, ask user for this later
+upsc_host = "cyberpower@localhost"
+
+release_version = "v1.1"
 
 # turn on a bunch of debugging prints
 debug = 0
@@ -110,11 +117,13 @@ config_file = os.getenv("HOME") + os.sep + ".syshealthrc"
 df_paths      = ["/bin/df"]
 ps_paths      = ["/bin/ps"]
 rrdtool_paths = ["/usr/bin/rrdtool","/usr/local/bin/rrdtool","/usr/local/rrdtool/bin/rrdtool"]
+upsc_paths    = ["/bin/upsc"]
 
 # Start with empty paths to the binaries
 df_path      = ""
 ps_path      = ""
 rrdtool_path = ""
+upsc_path    = ""
 
 # .png image size (should be in the config file)
 width  = 400
@@ -153,6 +162,33 @@ meminfo_fields = [
                     "HugePages_Free",
                     "Hugepagesize"
                  ]
+
+upsc_fields = [
+		("battery.charge","bat_charge"),
+		("battery.charge.low","bat_charge_low"),
+		("battery.charge.warning","bat_warning"),
+		("battery.runtime","bat_runtime"),
+		("battery.runtime.low","bat_runtime_low"),
+		("battery.voltage","bat_voltage"),
+		("battery.voltage.nominal","bat_volts_nominal"),
+		("input.transfer.high","input_high"),
+		("input.transfer.low","input_low"),
+		("input.voltage","input_voltage"),
+		("input.voltage.nominal","input_volts_nominal"),
+		("output.voltage","output_voltage"),
+		("ups.delay.shutdown","shutdown_delay"),
+		("ups.load","ups_load"),
+		]
+
+upsc_graph = [
+        "bat_charge",
+        "bat_runtime",
+        "bat_voltage",
+        "input_voltage",
+        "output_voltage",
+        "ups_load",
+        ]
+
 
 # ------------------------------------------------------------------------
 # System Health Monitor usage
@@ -504,6 +540,38 @@ def create_counter( rrd_file ):
         output = os.popen( rrd_string ).readlines()
 
 
+def create_upsc( rrd_file ):
+    """
+    Create the initial upsc RRD file
+    """
+    if os.path.isfile( rrd_file ):
+        print "%s exists, skipping creation" % (rrd_file)
+        return
+    rrd_cmd = [ rrdtool_path,  "create", rrd_file, ]
+
+    for k in upsc_fields:
+        rrd_cmd.append("DS:%s:GAUGE:600:U:U" % (k[1]))
+
+        rrd_cmd += ["RRA:AVERAGE:0.5:1:676",
+                    "RRA:AVERAGE:0.5:6:672",
+                    "RRA:AVERAGE:0.5:24:720",
+                    "RRA:AVERAGE:0.5:288:730",
+                    "RRA:MAX:0.5:1:676",
+                    "RRA:MAX:0.5:6:672",
+                    "RRA:MAX:0.5:24:720",
+                    "RRA:MAX:0.5:288:797",
+                  ] 
+
+        if debug>0: 
+            debug_print(rrd_cmd)
+            
+        rrd_string = ""
+        for i in rrd_cmd:
+            rrd_string = rrd_string + i + " "
+        
+        output = os.popen( rrd_string ).readlines()
+
+
 def ask_number( prompt, default ):
     """
     Prompt the user to enter a number. If enter it hit the default is
@@ -557,6 +625,7 @@ def setup_monitor():
     global rrdtool_path
     global ps_path
     global df_path
+    global upsc_path
     global width
     global height
     
@@ -604,6 +673,20 @@ def setup_monitor():
 
     config.set("paths","ps",path)
     ps_path = path
+
+    # Find upsc
+    for path in upsc_paths:
+        if os.path.isfile(path):
+	    break
+    else:
+        # Prompt the user for the location
+        while not os.path.isfile(path):
+             path = raw_input("Enter location of upsc : ")
+    config.set("paths","upsc",path)
+    upsc_path = path
+
+
+
 
     # Get the path to the rrd files
     rrd_path = os.getenv("HOME") + os.sep + "health_rrd"
@@ -660,6 +743,9 @@ def setup_monitor():
 
     config.set("paths", "uptime_rrd",  "uptime" )
     create_uptime( rrd_path + os.sep + "uptime.rrd" )
+
+    config.set("paths", "upsc_rrd", "upsc" )
+    create_upsc( rrd_path + os.sep + "upsc.rrd" )
 
     config.add_section("interfaces")    
     # Available interfaces
@@ -969,6 +1055,20 @@ def create_html():
             col = 0
     f.write("</tr></table><p>\n")
 
+    # upsc if it is supported
+    if 1:
+        f.write("<b>UPS</b><br>")
+        f.write("<table border=1 bgcolor=#EEEEEE><tr>")
+        col = 0
+        upsc_graph.sort()
+        for k in upsc_graph:
+            f.write("<td>%s<br><a href=upsc_%s.html><img src=upsc_%s%s.png></a></td>\n" % (k,k,k, rrd_time[0]) )
+            col = col + 1
+            if( col > 1 ):
+                f.write("</tr><tr>\n")
+                col = 0
+        f.write("</tr></table><p>\n")
+
     f.write("<b>Other</b><br>")
     f.write("<table border=1 bgcolor=#EEEEEE><tr>")
     col = 0    
@@ -1049,6 +1149,20 @@ def create_html():
             col = 0
     f.write("</tr></table><p>\n")
 
+    # upsc if it is supported
+    if 1:
+        f.write("<b>UPS</b><br>")
+        f.write("<table border=1 bgcolor=#EEEEEE><tr>")
+        col = 0
+        upsc_graph.sort()
+        for k in upsc_graph:
+            f.write("<td>%s<br><a href=upsc_%s.html><img src=upsc_%s%s.png></a></td>\n" % (k,k,k, rrd_time[1]) )
+            col = col + 1
+            if( col > 1 ):
+                f.write("</tr><tr>\n")
+                col = 0
+        f.write("</tr></table><p>\n")
+
     f.write("<b>Other</b><br>")
     f.write("<table border=1 bgcolor=#EEEEEE><tr>")
     col = 0    
@@ -1128,6 +1242,20 @@ def create_html():
             f.write("</tr><tr>\n")
             col = 0
     f.write("</tr></table><p>\n")
+
+    # upsc if it is supported
+    if 1:
+        f.write("<b>UPS</b><br>")
+        f.write("<table border=1 bgcolor=#EEEEEE><tr>")
+        col = 0
+        upsc_graph.sort()
+        for k in upsc_graph:
+            f.write("<td>%s<br><a href=upsc_%s.html><img src=upsc_%s%s.png></a></td>\n" % (k,k,k, rrd_time[2]) )
+            col = col + 1
+            if( col > 1 ):
+                f.write("</tr><tr>\n")
+                col = 0
+        f.write("</tr></table><p>\n")
 
     f.write("<b>Other</b><br>")
     f.write("<table border=1 bgcolor=#EEEEEE><tr>")
@@ -1211,6 +1339,20 @@ def create_html():
             col = 0
     f.write("</tr></table><p>\n")
 
+    # upsc if it is supported
+    if 1:
+        f.write("<b>UPS</b><br>")
+        f.write("<table border=1 bgcolor=#EEEEEE><tr>")
+        col = 0
+        upsc_graph.sort()
+        for k in upsc_graph:
+            f.write("<td>%s<br><a href=upsc_%s.html><img src=upsc_%s%s.png></a></td>\n" % (k,k,k, rrd_time[3]) )
+            col = col + 1
+            if( col > 1 ):
+                f.write("</tr><tr>\n")
+                col = 0
+        f.write("</tr></table><p>\n")
+
     f.write("<b>Other</b><br>")
     f.write("<table border=1 bgcolor=#EEEEEE><tr>")
     col = 0    
@@ -1291,6 +1433,20 @@ def create_html():
             f.write("</tr><tr>\n")
             col = 0
     f.write("</tr></table><p>\n")
+
+    # upsc if it is supported
+    if 1:
+        f.write("<b>UPS</b><br>")
+        f.write("<table border=1 bgcolor=#EEEEEE><tr>")
+        col = 0
+        upsc_graph.sort()
+        for k in upsc_graph:
+            f.write("<td>%s<br><a href=upsc_%s.html><img src=upsc_%s%s.png></a></td>\n" % (k,k,k, rrd_time[4]) )
+            col = col + 1
+            if( col > 1 ):
+                f.write("</tr><tr>\n")
+                col = 0
+        f.write("</tr></table><p>\n")
 
     f.write("<b>Other</b><br>")
     f.write("<table border=1 bgcolor=#EEEEEE><tr>")
@@ -1402,6 +1558,10 @@ def check_files():
     if not os.path.isfile( rrd_path + os.sep + uptime_rrd + ".rrd" ):
         print "Creating " + rrd_path + os.sep + uptime_rrd + ".rrd"
         create_uptime( rrd_path + os.sep + uptime_rrd + ".rrd" )
+    
+    if not os.path.isfile( rrd_path + os.sep + upsc_rrd + ".rrd" ):
+        print "Creating " + rrd_path + os.sep + upsc_rrd + ".rrd"
+        create_upsc( rrd_path + os.sep + upsc_rrd + ".rrd" )
     
     for iface in interfaces_rrd.keys():
         if not os.path.isfile( rrd_path + os.sep + interfaces_rrd[iface] + ".rrd" ):
@@ -1692,6 +1852,42 @@ def read_external():
             debug_print(rrd_cmd)
 
         pid = os.spawnv( os.P_NOWAIT, rrdtool_path, rrd_cmd)
+
+
+def read_upsc( upsc_rrd ):
+    """
+    Read the values from upsc and insert them into a rrdfile
+    """
+    try:
+        upsc_cmd = "%s %s" % (upsc_path, upsc_host)
+        upsc = os.popen(upsc_cmd)
+    
+        # read everything
+        lines = upsc.readlines()
+        upsc.close()
+    except:
+        raise
+
+    upsc_values = {}
+    for line in lines:
+        line = line.strip()
+        (k,v) = line.split(':')
+	upsc_values[k] = v
+
+    rrd_data = "N:" + ":".join([str(upsc_values.get(f[0],'U')) for f in upsc_fields])
+
+    # Run rrdtool in as secure a fashion as possible
+    rrd_file = rrd_path + os.sep + upsc_rrd + ".rrd"
+    rrd_cmd = ("rrdtool","update", rrd_file, rrd_data)
+
+    if debug>0: 
+        debug_print(rrd_cmd)
+        
+    pid = os.spawnv( os.P_NOWAIT, rrdtool_path, rrd_cmd)
+
+
+
+
 
 def graph_interfaces( interfaces_rrd ):
     """
@@ -2013,7 +2209,48 @@ def graph_process_list( process_rrd ):
                 debug_print(rrd_string)
 
             output = os.popen( rrd_string ).readlines()
-            
+
+def graph_upsc( upsc_rrd ):
+    """
+    Graph the UPS stats
+    """
+    upsc_graph.sort()
+    for k in upsc_graph:
+        for t in rrd_time:
+            starttime = "%s" % (t)
+            endtime = "now"
+            rrd_file = rrd_path + os.sep + upsc_rrd + ".rrd"
+            png_file = os.path.join(png_path,"upsc_%s%s.png" % (k,t))
+
+            name_width = len(k)
+            width_str = "%d" % (width)
+            height_str = "%d" % (height)
+
+            rrd_cmd = [ rrdtool_path, " graph ", png_file, " --imgformat PNG",
+                        " --start '", starttime, 
+                        "' --end '", endtime, "' ",
+                        " --width ", width_str, 
+                        " --height ", height_str, 
+                        " DEF:value=%s:%s:AVERAGE" % (rrd_file,k),
+                        " LINE2:value#0000FF:'%s\\c'" % (k),
+                        " COMMENT:\""+" "*name_width+"      Min          Max           Avg         Last\\n\"",
+                        " GPRINT:value:MIN:\"%s %%8.2lf%%s \"" % (k),
+                        " GPRINT:value:MAX:\" %8.2lf%s \"",
+                        " GPRINT:value:AVERAGE:\" %8.2lf%s \"",
+                        " GPRINT:value:LAST:\" %8.2lf%s \\n\"",
+                        " COMMENT:\"Last Updated ", ctime().replace(":","\:"), "\\c\""
+                     ]
+
+            rrd_string = ""
+            for i in rrd_cmd:
+                rrd_string = rrd_string + i
+
+            if debug>0: 
+                debug_print(rrd_string)
+
+            output = os.popen( rrd_string ).readlines()
+
+
 def graph_external():
     """
     Graph the external applications
@@ -2076,7 +2313,7 @@ if (kernel_rev > 2.6) or (kernel_rev < 2.4):
 
 
 # Process command line arguments
-opts, args = getopt( sys.argv[1:], "", ["log","graph","setup","check","new","html","add"])
+opts, args = getopt( sys.argv[1:], "", ["log","graph","setup","check","new","html","add", "debug"])
 
 if not opts:
     usage()
@@ -2084,6 +2321,9 @@ if not opts:
     
 for i,value in opts:
     command[i] = value
+
+if command.has_key('--debug'):
+    debug = 1
 
 config = ConfigParser.ConfigParser()
     
@@ -2110,6 +2350,18 @@ png_path     = config.get("paths","png_path")
 meminfo_rrd  = config.get("paths","meminfo_rrd")
 loadavg_rrd  = config.get("paths","loadavg_rrd")
 uptime_rrd   = config.get("paths","uptime_rrd")
+
+try:
+    upsc_path = config.get("paths","upsc")
+except ConfigParser.NoOptionError:
+    config.set("paths","upsc", upsc_paths[0])
+    upsc_path = upsc_paths[0]
+
+try:
+    upsc_rrd     = config.get("paths","upsc_rrd")
+except ConfigParser.NoOptionError:
+    config.set("paths", "upsc_rrd", "upsc" )
+    upsc_rrd     = config.get("paths","upsc_rrd")
 
 
 # Add an external command
@@ -2202,6 +2454,7 @@ if command.has_key('--log'):
     read_drive_space( drives_rrd )
     read_drive_inodes( drives_rrd )
     read_process_list( process_rrd )
+    read_upsc( upsc_rrd )
     read_external()
     
 if command.has_key('--graph'):
@@ -2212,5 +2465,6 @@ if command.has_key('--graph'):
     graph_drive_space( drives_rrd )
     graph_drive_inodes( drives_rrd )
     graph_process_list( process_rrd )
+    graph_upsc( upsc_rrd )
     graph_external()
     
