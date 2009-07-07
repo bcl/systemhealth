@@ -1529,6 +1529,21 @@ def create_html():
         f.write("</center>")
         f.close()
 
+
+    # upsc if it is supported
+    if 1:
+        upsc_graph.sort()
+        for k in upsc_graph:
+            f = open(os.path.join(png_path, "upsc_%s.html" % (k)), "w" )
+            f.write("<center>")
+            f.write("<b>%s</b><p>" % (k) )
+            for t in rrd_time:
+                f.write("%s<br><img src=upsc_%s%s.png><br>\n" % (t,k,t) )
+            # Write the footer
+            f.write("<p><hr><p><font size=-2>Created with <a href=\"http://www.brianlane.com/software/systemhealth/\">System Health Monitor</a> by Brian C. Lane</font><p>\n")
+            f.write("</center>")
+            f.close()
+
     for key in external_rrd.keys():
         f = open( png_path + os.sep + external_rrd[key][1] + ".html", "w" )
         f.write("<center>")
